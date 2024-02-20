@@ -1,0 +1,23 @@
+[tool.ruff]
+target-version = "py311"
+
+exclude = [
+]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "ANN",
+    "D",
+    "EM101",
+    "S105",
+    "RUF012",
+    "ARG001",
+    "COM81",
+    "E50",
+    "F40",
+    "I00",
+    "N80",
+    "PT00",
+    "TRY003",
+]
