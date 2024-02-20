@@ -1,3 +1,4 @@
+import json
 import logging
 from unittest import mock
 
@@ -28,3 +29,33 @@ class TransfersViewTests(TestCase):
                 "Received content: %(content)",
                 extra={"content": msg},
             )
+
+
+class IdempotencyTests(TestCase):
+    def setUp(self):
+        self.url = reverse("bulk_transfer")
+        self.content = '{"foo": 1, "bar": 2}'
+        self.content_json = json.loads(self.content)
+
+    def test_bulk_transfer_first_is_ok(self):
+        response = self.client.post(
+            self.url,
+            data=self.content_json,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_bulk_transfer_second_is_not_allowed(self):
+        response = self.client.post(
+            self.url,
+            data=self.content_json,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            self.url,
+            data=self.content_json,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 422)
