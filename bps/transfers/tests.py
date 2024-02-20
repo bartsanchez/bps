@@ -19,12 +19,13 @@ class TransfersViewTests(TestCase):
 class ProcessedBulkTransferModelTests(TestCase):
     def setUp(self):
         self.processed_bulk_transfer = ProcessedBulkTransfer.objects.create(
-            content="foo"
+            content="foo",
         )
 
     def test_str(self):
         self.assertEqual(
-            str(self.processed_bulk_transfer), hashlib.sha256(b"foo").hexdigest()
+            str(self.processed_bulk_transfer),
+            hashlib.sha256(b"foo").hexdigest(),
         )
 
     def test_request_hash_field_automatically_generated(self):
