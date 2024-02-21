@@ -2,7 +2,7 @@ import hashlib
 import logging
 
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from .models import ProcessedBulkTransfer
@@ -10,7 +10,7 @@ from .models import ProcessedBulkTransfer
 logger = logging.getLogger(__name__)
 
 
-@csrf_protect
+@csrf_exempt
 @require_http_methods(["POST"])
 async def bulk_transfer(request):
     content = request.body
