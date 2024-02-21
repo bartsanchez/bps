@@ -4,7 +4,7 @@ import requests
 
 BASE_URL = "http://bps:8000"
 ADMIN_URL = f"{BASE_URL}/admin"
-BULK_TRANSFER_URL = f"{BASE_URL}/transfers/bulk_transfer"
+BULK_TRANSFER_URL = f"{BASE_URL}/bulk_transfer"
 
 UNPROCESSABLE_CONTENT_STATUS_CODE = 422
 

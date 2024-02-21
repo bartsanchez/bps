@@ -35,7 +35,7 @@ class TransfersViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_bulk_transfer_POST_logged(self):
-        logger = logging.getLogger("transfers.views")
+        logger = logging.getLogger("bank_account_transfers.views")
 
         msg = {"foo": 1, "bar": 2, "spam": 3}
 
