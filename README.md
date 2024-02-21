@@ -8,6 +8,7 @@
 
 ## Notes about the project
 
+- This is an exploratory project and should not be used in production.
 - The total time spent was around 9 hours.
 - I am fairly proud about this project.
 - The main reason for spending so much time was to fullfil my curiosity using async with Django.
@@ -17,6 +18,7 @@
   horizontally should be safe with the current implementation.
 - It is assumed that once created the Transfer instance, some asynchrounous task (Celery?) should perform the real
   bank transfer, and ensure it was successfully performed. Skipped here in purpose.
+- It is highly recommended to use a better way of handling secrets.
 - This is a git repository, so it could be worth it to review the commit history.
 
 ## Usage
