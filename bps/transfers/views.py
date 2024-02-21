@@ -21,8 +21,7 @@ async def bulk_transfer(request):
     if already_processed:
         return HttpResponse(status=422)
 
-    # Store request
-    await ProcessedBulkTransfer.objects.acreate(content=content.decode())
+    await mark_as_processed(content)
 
     return HttpResponse("OK")
 
@@ -33,3 +32,7 @@ async def is_already_processed(content):
     hashed_content = hashlib.sha256(content).hexdigest()
     query = ProcessedBulkTransfer.objects.filter(request_hash=hashed_content)
     return await query.aexists()
+
+
+async def mark_as_processed(content):
+    return await ProcessedBulkTransfer.objects.acreate(content=content.decode())
