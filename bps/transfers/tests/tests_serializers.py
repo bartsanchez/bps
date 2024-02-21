@@ -1,3 +1,4 @@
+from bank_accounts.models import BankAccount
 from django.test import TestCase
 from django.urls import reverse
 
@@ -5,6 +6,13 @@ from django.urls import reverse
 class SerializerTests(TestCase):
     def setUp(self):
         self.url = reverse("bulk_transfer")
+        bank_account = BankAccount(
+            organization_name="foo",
+            iban="bar",
+            bic="qux",
+            balance_cents=0,
+        )
+        bank_account.save()
 
     def test_bulk_transfer_one_credit_transfer(self):
         content = {

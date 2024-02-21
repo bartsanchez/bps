@@ -1,6 +1,7 @@
 import logging
 from unittest import mock
 
+from bank_accounts.models import BankAccount
 from django.test import TestCase
 from django.urls import reverse
 
@@ -8,6 +9,13 @@ from django.urls import reverse
 class TransfersViewTests(TestCase):
     def setUp(self):
         self.url = reverse("bulk_transfer")
+        bank_account = BankAccount(
+            organization_name="a",
+            iban="b",
+            bic="c",
+            balance_cents=0,
+        )
+        bank_account.save()
 
     def test_bulk_transfer_GET(self):
         response = self.client.get(self.url)
@@ -42,6 +50,13 @@ class TransfersViewTests(TestCase):
 class IdempotencyTests(TestCase):
     def setUp(self):
         self.url = reverse("bulk_transfer")
+        bank_account = BankAccount(
+            organization_name="foo",
+            iban="bar",
+            bic="qux",
+            balance_cents=0,
+        )
+        bank_account.save()
         self.content = {
             "organization_name": "foo",
             "organization_iban": "bar",

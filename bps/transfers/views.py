@@ -3,6 +3,7 @@ import json
 import logging
 
 import redis
+from bank_accounts.models import BankAccount
 from bank_accounts.serializers import BankAccountSerializer
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -20,8 +21,14 @@ async def bulk_transfer(request):
 
     logger.info("Received content: %(content)", extra={"content": content.decode()})
 
-    is_valid = await is_valid_data(content)
-    if not is_valid:
+    serializer = await serialize_data(content)
+    if not serializer.is_valid():
+        return HttpResponse(status=422)
+
+    iban = serializer.data["organization_iban"]
+    bic = serializer.data["organization_bic"]
+    bank_account = await bank_account_exists(iban=iban, bic=bic)
+    if not bank_account:
         return HttpResponse(status=422)
 
     # Setup semaphore to avoid race conditions
@@ -38,10 +45,9 @@ async def bulk_transfer(request):
     return HttpResponse("OK")
 
 
-async def is_valid_data(content):
+async def serialize_data(content):
     data = json.loads(content)
-    serializer = BankAccountSerializer(data=data)
-    return serializer.is_valid()
+    return BankAccountSerializer(data=data)
 
 
 async def is_already_processed(content):
@@ -49,6 +55,11 @@ async def is_already_processed(content):
     # Ensure we are not processing the same request more than once
     hashed_content = hashlib.sha256(content).hexdigest()
     query = ProcessedBulkTransfer.objects.filter(request_hash=hashed_content)
+    return await query.aexists()
+
+
+async def bank_account_exists(iban, bic):
+    query = BankAccount.objects.filter(iban=iban, bic=bic)
     return await query.aexists()
 
 

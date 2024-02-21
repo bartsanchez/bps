@@ -8,8 +8,8 @@ class BankAccountModelTests(TestCase):
         self.bank_account = BankAccount.objects.create(
             organization_name="fake_organization",
             balance_cents=777,
-            iban="FR10474608000002006107XXXXX",
-            bic="OIVUSCLQXXX",
+            iban="fake_iban",
+            bic="fake_bic",
         )
 
     def test_str(self):

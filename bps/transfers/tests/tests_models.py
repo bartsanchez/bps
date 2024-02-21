@@ -33,8 +33,8 @@ class TransferModelTests(TestCase):
         bank_account = BankAccount.objects.create(
             organization_name="fake_organization",
             balance_cents=777,
-            iban="FR10474608000002006107XXXXX",
-            bic="OIVUSCLQXXX",
+            iban="invented_iban",
+            bic="invented_bic",
         )
         self.transfer = Transfer.objects.create(
             counterparty_name="Bip Bip",
@@ -54,8 +54,8 @@ class TransferAmountCentsTests(TestCase):
         self.bank_account = BankAccount.objects.create(
             organization_name="fake_organization",
             balance_cents=777,
-            iban="FR10474608000002006107XXXXX",
-            bic="OIVUSCLQXXX",
+            iban="another_iban",
+            bic="another_bic",
         )
 
     def test_cents_calculated_correctly(self):
