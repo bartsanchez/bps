@@ -23,6 +23,14 @@ make start
 
 ## Run tests
 
+Unit tests:
+
 ```sh
 make tests
+```
+
+Integration tests:
+
+```sh
+make integration_tests
 ```

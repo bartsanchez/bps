@@ -1,27 +1,31 @@
 .PHONY: build start stop logs ps tests
 
+ENV ?= dev
 START_SERVICES ?=
 RUN_SERVICE ?=
 
 COMPOSE_EXEC ?= docker compose
 
 build:
-	${COMPOSE_EXEC} build
+	${COMPOSE_EXEC} -f docker-compose.yml -f docker-compose.$(ENV).yml build
 
 start:
-	${COMPOSE_EXEC} up -d $(START_SERVICES)
+	${COMPOSE_EXEC} -f docker-compose.yml -f docker-compose.$(ENV).yml up -d $(START_SERVICES)
 
 stop:
-	${COMPOSE_EXEC} down
+	${COMPOSE_EXEC} -f docker-compose.yml -f docker-compose.$(ENV).yml down
 
 run:
-	${COMPOSE_EXEC} run --rm $(RUN_SERVICE)
+	${COMPOSE_EXEC} -f docker-compose.yml -f docker-compose.$(ENV).yml run --rm $(RUN_SERVICE)
 
 logs:
-	${COMPOSE_EXEC} logs $(ARGS)
+	${COMPOSE_EXEC} -f docker-compose.yml -f docker-compose.$(ENV).yml logs $(ARGS)
 
 ps:
-	${COMPOSE_EXEC} ps
+	${COMPOSE_EXEC} -f docker-compose.yml -f docker-compose.$(ENV).yml ps
 
 tests:
-	${COMPOSE_EXEC} run --rm bps python manage.py test
+	${COMPOSE_EXEC} -f docker-compose.yml -f docker-compose.$(ENV).yml run --rm bps python manage.py test
+
+integration_tests:
+	scripts/run_integration_tests.sh

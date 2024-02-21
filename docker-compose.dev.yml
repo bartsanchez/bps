@@ -1,0 +1,5 @@
+version: '3'
+services:
+    bps:
+        volumes:
+            - ./bps:/opt/app/bps/
