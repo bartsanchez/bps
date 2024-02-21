@@ -20,6 +20,11 @@ class ObjectsCreationTests(TestCase):
     def test_bulk_transfer_objects_created(self):
         self.assertEqual(BankAccountTransfersRequest.objects.count(), 0)
         self.assertEqual(Transfer.objects.count(), 0)
+        self.assertEqual(BankAccount.objects.filter(iban="b").count(), 1)
+
+        bank_account = BankAccount.objects.get(iban="b")
+        self.assertEqual(bank_account.balance_cents, 1800)
+
         response = self.client.post(
             self.url,
             data={
@@ -54,7 +59,16 @@ class ObjectsCreationTests(TestCase):
         self.assertEqual(Transfer.objects.count(), 2)
 
         first_transfer = Transfer.objects.get(counterparty_iban="f")
+        self.assertEqual(first_transfer.counterparty_name, "d")
+        self.assertEqual(first_transfer.counterparty_bic, "e")
+        self.assertEqual(first_transfer.description, "g")
         self.assertEqual(first_transfer.amount_cents, 710)
 
         second_transfer = Transfer.objects.get(counterparty_iban="j")
+        self.assertEqual(second_transfer.counterparty_name, "h")
+        self.assertEqual(second_transfer.counterparty_bic, "i")
+        self.assertEqual(second_transfer.description, "k")
         self.assertEqual(second_transfer.amount_cents, 1040)
+
+        bank_account = BankAccount.objects.get(iban="b")
+        self.assertEqual(bank_account.balance_cents, 50)

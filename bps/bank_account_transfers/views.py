@@ -52,10 +52,14 @@ async def bulk_transfer(request):
 def perform_operations(serializer, bank_account, content):
     # Ensure that everything is done or nothing
     with transaction.atomic():
-        if serializer.requested_amount_cents() > bank_account.balance_cents:
+        requested_amount_cents = serializer.requested_amount_cents()
+        if requested_amount_cents > bank_account.balance_cents:
             return False
 
         serializer.save()
+
+        bank_account.balance_cents -= requested_amount_cents
+        bank_account.save()
 
         mark_as_processed(content)
 
