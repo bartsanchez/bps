@@ -3,3 +3,4 @@ ruff
 gunicorn
 psycopg[binary]
 dj-database-url
+redis

@@ -1,6 +1,7 @@
 import hashlib
 import logging
 
+import redis
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -17,11 +18,16 @@ async def bulk_transfer(request):
 
     logger.info("Received content: %(content)", extra={"content": content.decode()})
 
-    already_processed = await is_already_processed(content)
-    if already_processed:
-        return HttpResponse(status=422)
+    # Setup semaphore to avoid race conditions
+    r = redis.Redis(host="redis_semaphore")
+    with r.lock(
+        "replace-me-with-iban",
+    ):  # TODO: replace lock key with iban to allow requests from different accounts
+        already_processed = await is_already_processed(content)
+        if already_processed:
+            return HttpResponse(status=422)
 
-    await mark_as_processed(content)
+        await mark_as_processed(content)
 
     return HttpResponse("OK")
 

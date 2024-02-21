@@ -28,5 +28,11 @@ services:
         depends_on:
             - db
             - run_migrations
+            - redis_semaphore
         links:
             - db
+            - redis_semaphore
+
+    redis_semaphore:
+        image: redis:7.2.3
+        restart: always
