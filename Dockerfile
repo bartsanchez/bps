@@ -20,4 +20,4 @@ WORKDIR /opt/app/bps
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "gunicorn bps.wsgi --bind 0.0.0.0:8000"]
+CMD ["sh", "-c", "gunicorn bps.wsgi --bind 0.0.0.0:8000", "--workers", "3"]
