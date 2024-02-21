@@ -1,4 +1,4 @@
-.PHONY: build start stop logs ps
+.PHONY: build start stop logs ps tests
 
 START_SERVICES ?=
 RUN_SERVICE ?=
@@ -22,3 +22,6 @@ logs:
 
 ps:
 	${COMPOSE_EXEC} ps
+
+tests:
+	${COMPOSE_EXEC} run --rm bps python manage.py test

@@ -20,3 +20,9 @@ Start the application:
 make build
 make start
 ```
+
+## Run tests
+
+```sh
+make tests
+```
