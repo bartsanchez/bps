@@ -46,7 +46,7 @@ class TransferModelTests(TestCase):
         )
 
     def test_str(self):
-        self.assertEqual(str(self.transfer), "Transfer(id=1)")
+        self.assertEqual(str(self.transfer), f"Transfer(id={self.transfer.id})")
 
 
 class TransferAmountCentsTests(TestCase):

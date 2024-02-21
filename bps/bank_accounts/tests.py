@@ -13,4 +13,7 @@ class BankAccountModelTests(TestCase):
         )
 
     def test_str(self):
-        self.assertEqual(str(self.bank_account), "BankAccount(id=1)")
+        self.assertEqual(
+            str(self.bank_account),
+            f"BankAccount(id={self.bank_account.id})",
+        )

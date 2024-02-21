@@ -8,7 +8,7 @@ export ENV=test
 # Prepare system
 make build
 make start START_SERVICES="bps run_migrations"
-sleep 5
+sleep 10
 
 # Run tests
 set +o errexit

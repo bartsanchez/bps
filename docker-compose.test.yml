@@ -3,6 +3,7 @@ services:
     test:
         build: tests/
         depends_on:
+            - db
             - bps
             - run_migrations
         links:

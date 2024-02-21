@@ -25,7 +25,10 @@ ps:
 	${COMPOSE_EXEC} -f docker-compose.yml -f docker-compose.$(ENV).yml ps
 
 tests:
+	make build
+	make start
 	${COMPOSE_EXEC} -f docker-compose.yml -f docker-compose.$(ENV).yml run --rm bps python manage.py test
+	make stop
 
 integration_tests:
 	scripts/run_integration_tests.sh
