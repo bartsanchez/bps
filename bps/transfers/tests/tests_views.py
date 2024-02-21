@@ -1,4 +1,3 @@
-import json
 import logging
 from unittest import mock
 
@@ -15,32 +14,43 @@ class TransfersViewTests(TestCase):
         self.assertEqual(response.status_code, 405)
 
     def test_bulk_transfer_POST(self):
-        response = self.client.post(self.url)
+        response = self.client.post(
+            self.url,
+            data={
+                "organization_name": "a",
+                "organization_iban": "b",
+                "organization_bic": "c",
+            },
+            content_type="application/json",
+        )
         self.assertEqual(response.status_code, 200)
 
     def test_bulk_transfer_POST_logged(self):
         logger = logging.getLogger("transfers.views")
 
-        msg = "{foo=1, bar=2, spam=3}"
+        msg = {"foo": 1, "bar": 2, "spam": 3}
 
         with mock.patch.object(logger, "info") as log_mock:
             self.client.post(self.url, data=msg, content_type="application/json")
             log_mock.assert_called_once_with(
                 "Received content: %(content)",
-                extra={"content": msg},
+                extra={"content": '{"foo": 1, "bar": 2, "spam": 3}'},
             )
 
 
 class IdempotencyTests(TestCase):
     def setUp(self):
         self.url = reverse("bulk_transfer")
-        self.content = '{"foo": 1, "bar": 2}'
-        self.content_json = json.loads(self.content)
+        self.content = {
+            "organization_name": "foo",
+            "organization_iban": "bar",
+            "organization_bic": "qux",
+        }
 
     def test_bulk_transfer_first_is_ok(self):
         response = self.client.post(
             self.url,
-            data=self.content_json,
+            data=self.content,
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
@@ -48,14 +58,14 @@ class IdempotencyTests(TestCase):
     def test_bulk_transfer_second_is_not_allowed(self):
         response = self.client.post(
             self.url,
-            data=self.content_json,
+            data=self.content,
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
 
         response = self.client.post(
             self.url,
-            data=self.content_json,
+            data=self.content,
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 422)

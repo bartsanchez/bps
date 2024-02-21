@@ -4,8 +4,12 @@
 #
 #    pip-compile
 #
+adrf==0.1.4
+    # via -r requirements.in
 asgiref==3.7.2
     # via django
+async-property==0.2.2
+    # via adrf
 async-timeout==4.0.3
     # via redis
 dj-database-url==2.1.0
@@ -13,7 +17,11 @@ dj-database-url==2.1.0
 django==5.0.2
     # via
     #   -r requirements.in
+    #   adrf
     #   dj-database-url
+    #   djangorestframework
+djangorestframework==3.14.0
+    # via adrf
 gunicorn==21.2.0
     # via -r requirements.in
 packaging==23.2
@@ -22,6 +30,8 @@ psycopg[binary]==3.1.18
     # via -r requirements.in
 psycopg-binary==3.1.18
     # via psycopg
+pytz==2024.1
+    # via djangorestframework
 redis==5.0.1
     # via -r requirements.in
 ruff==0.2.2

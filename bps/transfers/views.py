@@ -1,7 +1,9 @@
 import hashlib
+import json
 import logging
 
 import redis
+from bank_accounts.serializers import BankAccountSerializer
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -17,6 +19,11 @@ async def bulk_transfer(request):
     content = request.body
 
     logger.info("Received content: %(content)", extra={"content": content.decode()})
+
+    data = json.loads(content)
+    serializer = BankAccountSerializer(data=data)
+    if not serializer.is_valid():
+        return HttpResponse(status=422)
 
     # Setup semaphore to avoid race conditions
     r = redis.Redis(host="redis_semaphore")

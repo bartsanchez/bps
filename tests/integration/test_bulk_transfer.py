@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 import requests
@@ -13,9 +12,7 @@ UNPROCESSABLE_CONTENT_STATUS_CODE = 422
 def test_samples():
     for sample_name in ("sample1.json", "sample2.json"):
         with Path(f"./{sample_name}").open() as f:
-            sample_content = f.read()
-
-        data = json.loads(sample_content)
+            data = f.read()
 
         r = requests.post(BULK_TRANSFER_URL, data=data, timeout=5)
         assert r.status_code == requests.codes.ok
@@ -23,9 +20,7 @@ def test_samples():
 
 def test_sample1_again_is_returning_422_error():
     with Path("./sample1.json").open() as f:
-        sample_content = f.read()
-
-    data = json.loads(sample_content)
+        data = f.read()
 
     r = requests.post(BULK_TRANSFER_URL, data=data, timeout=5)
     assert r.status_code == UNPROCESSABLE_CONTENT_STATUS_CODE
