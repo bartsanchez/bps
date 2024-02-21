@@ -50,7 +50,7 @@ class ObjectsCreationTests(TestCase):
             },
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(BankAccountTransfersRequest.objects.count(), 1)
 
         bank_account_transfer_request = BankAccountTransfersRequest.objects.first()

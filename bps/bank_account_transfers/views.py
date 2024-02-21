@@ -45,7 +45,7 @@ async def bulk_transfer(request):
         if not result:
             return HttpResponse(status=UNPROCESSABLE_CONTENT_STATUS_CODE)
 
-    return HttpResponse("OK")
+    return HttpResponse("OK", status=201)
 
 
 @sync_to_async

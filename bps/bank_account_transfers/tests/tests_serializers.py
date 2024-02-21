@@ -68,7 +68,7 @@ class SerializerTests(TestCase):
             data=content,
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
     def test_bulk_transfer_more_than_one_credit_transfers(self):
         content = {
@@ -104,7 +104,7 @@ class SerializerTests(TestCase):
             data=content,
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
     def test_bulk_transfer_not_enough_funds(self):
         bank_account = BankAccount(

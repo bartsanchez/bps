@@ -32,7 +32,7 @@ class TransfersViewTests(TestCase):
             },
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
     def test_bulk_transfer_POST_logged(self):
         logger = logging.getLogger("bank_account_transfers.views")
@@ -70,7 +70,7 @@ class IdempotencyTests(TestCase):
             data=self.content,
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
     def test_bulk_transfer_second_is_not_allowed(self):
         response = self.client.post(
@@ -78,7 +78,7 @@ class IdempotencyTests(TestCase):
             data=self.content,
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         response = self.client.post(
             self.url,
