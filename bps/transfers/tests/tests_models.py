@@ -1,8 +1,9 @@
 import hashlib
 
+from bank_accounts.models import BankAccount
 from django.test import TestCase
 
-from transfers.models import ProcessedBulkTransfer
+from transfers.models import ProcessedBulkTransfer, Transfer
 
 
 class ProcessedBulkTransferModelTests(TestCase):
@@ -25,3 +26,67 @@ class ProcessedBulkTransferModelTests(TestCase):
 
     def test_content(self):
         self.assertEqual(self.processed_bulk_transfer.content, "foo")
+
+
+class TransferModelTests(TestCase):
+    def setUp(self):
+        bank_account = BankAccount.objects.create(
+            organization_name="fake_organization",
+            balance_cents=777,
+            iban="FR10474608000002006107XXXXX",
+            bic="OIVUSCLQXXX",
+        )
+        self.transfer = Transfer.objects.create(
+            counterparty_name="Bip Bip",
+            counterparty_iban="EE383680981021245685",
+            counterparty_bic="CRLYFRPPTOU",
+            amount_cents="14.5",
+            bank_account=bank_account,
+            description="Wonderland/4410",
+        )
+
+    def test_str(self):
+        self.assertEqual(str(self.transfer), "Transfer(id=1)")
+
+
+class TransferAmountCentsTests(TestCase):
+    def setUp(self):
+        self.bank_account = BankAccount.objects.create(
+            organization_name="fake_organization",
+            balance_cents=777,
+            iban="FR10474608000002006107XXXXX",
+            bic="OIVUSCLQXXX",
+        )
+
+    def test_cents_calculated_correctly(self):
+        transfer = Transfer.objects.create(
+            counterparty_name="Bip Bip",
+            counterparty_iban="EE383680981021245685",
+            counterparty_bic="CRLYFRPPTOU",
+            amount_cents="14.5",
+            bank_account=self.bank_account,
+            description="Wonderland/4410",
+        )
+        self.assertEqual(transfer.amount_cents, 1450)
+
+    def test_cents_calculated_two_decimals(self):
+        transfer = Transfer.objects.create(
+            counterparty_name="Bip Bip",
+            counterparty_iban="EE383680981021245685",
+            counterparty_bic="CRLYFRPPTOU",
+            amount_cents="14.57",
+            bank_account=self.bank_account,
+            description="Wonderland/4410",
+        )
+        self.assertEqual(transfer.amount_cents, 1457)
+
+    def test_cents_calculated_no_decimals(self):
+        transfer = Transfer.objects.create(
+            counterparty_name="Bip Bip",
+            counterparty_iban="EE383680981021245685",
+            counterparty_bic="CRLYFRPPTOU",
+            amount_cents="14",
+            bank_account=self.bank_account,
+            description="Wonderland/4410",
+        )
+        self.assertEqual(transfer.amount_cents, 1400)
