@@ -1,0 +1,11 @@
+version: '3'
+services:
+    run_migrations:
+        build: .
+        command: ../scripts/run_migrations.sh
+
+    bps:
+        build: .
+        restart: always
+        ports:
+          - 8000:8000
