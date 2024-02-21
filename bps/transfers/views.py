@@ -27,15 +27,14 @@ async def bulk_transfer(request):
     if not serializer.is_valid():
         return HttpResponse(status=UNPROCESSABLE_CONTENT_STATUS_CODE)
 
-    bank_account = await bank_account_exists(serializer.data)
-    if not bank_account:
+    bank_account, exists = await bank_account_exists(serializer.data)
+    if not exists:
         return HttpResponse(status=UNPROCESSABLE_CONTENT_STATUS_CODE)
 
     # Setup semaphore to avoid race conditions
     r = redis.Redis(host="redis_semaphore")
-    with r.lock(
-        "replace-me-with-iban",
-    ):  # TODO: replace lock key with iban to allow requests from different accounts
+    # Using IBAN as key for semaphore to not block operations for different accounts
+    with r.lock(bank_account.iban):
         already_processed = await is_already_processed(content)
         if already_processed:
             return HttpResponse(status=UNPROCESSABLE_CONTENT_STATUS_CODE)
@@ -62,7 +61,7 @@ async def bank_account_exists(data):
     iban = data["organization_iban"]
     bic = data["organization_bic"]
     query = BankAccount.objects.filter(iban=iban, bic=bic)
-    return await query.aexists()
+    return await query.afirst(), query.aexists()
 
 
 async def mark_as_processed(content):
