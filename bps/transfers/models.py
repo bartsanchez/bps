@@ -1,6 +1,7 @@
 import hashlib
 from decimal import Decimal
 
+from bank_account_transfers.models import BankAccountTransfersRequest
 from bank_accounts.models import BankAccount
 from django.db import models
 
@@ -23,8 +24,13 @@ class Transfer(models.Model):
     counterparty_iban = models.TextField()
     counterparty_bic = models.TextField()
     amount_cents = models.PositiveIntegerField()
-    bank_account = models.ForeignKey(BankAccount, on_delete=models.CASCADE)
     description = models.TextField()
+    bank_account = models.ForeignKey(BankAccount, on_delete=models.CASCADE)
+    bank_account_transfers_request = models.ForeignKey(
+        BankAccountTransfersRequest,
+        on_delete=models.CASCADE,
+        null=True,
+    )
 
     def __str__(self):
         return f"Transfer(id={self.id})"

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "bank_accounts",
     "transfers",
+    "bank_account_transfers",
 ]
 
 MIDDLEWARE = [

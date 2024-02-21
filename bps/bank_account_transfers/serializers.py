@@ -2,16 +2,16 @@ from adrf.serializers import ModelSerializer
 from rest_framework import serializers
 from transfers.serializers import TransferSerializer
 
-from .models import BankAccount
+from .models import BankAccountTransfersRequest
 
 
-class BankAccountSerializer(ModelSerializer):
-    organization_iban = serializers.CharField(source="iban")
-    organization_bic = serializers.CharField(source="bic")
+class BankAccountTransfersRequestSerializer(ModelSerializer):
+    organization_iban = serializers.CharField()
+    organization_bic = serializers.CharField()
     credit_transfers = TransferSerializer(many=True, source="transfers")
 
     class Meta:
-        model = BankAccount
+        model = BankAccountTransfersRequest
         fields = [
             "organization_name",
             "organization_iban",

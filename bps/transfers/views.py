@@ -3,8 +3,8 @@ import json
 import logging
 
 import redis
+from bank_account_transfers.serializers import BankAccountTransfersRequestSerializer
 from bank_accounts.models import BankAccount
-from bank_accounts.serializers import BankAccountSerializer
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -46,7 +46,7 @@ async def bulk_transfer(request):
 
 async def serialize_data(content):
     data = json.loads(content)
-    return BankAccountSerializer(data=data)
+    return BankAccountTransfersRequestSerializer(data=data)
 
 
 async def is_already_processed(content):
@@ -61,7 +61,7 @@ async def bank_account_exists(data):
     iban = data["organization_iban"]
     bic = data["organization_bic"]
     query = BankAccount.objects.filter(iban=iban, bic=bic)
-    return await query.afirst(), query.aexists()
+    return await query.afirst(), await query.aexists()
 
 
 async def mark_as_processed(content):
