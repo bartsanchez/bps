@@ -20,9 +20,8 @@ async def bulk_transfer(request):
 
     logger.info("Received content: %(content)", extra={"content": content.decode()})
 
-    data = json.loads(content)
-    serializer = BankAccountSerializer(data=data)
-    if not serializer.is_valid():
+    is_valid = await is_valid_data(content)
+    if not is_valid:
         return HttpResponse(status=422)
 
     # Setup semaphore to avoid race conditions
@@ -37,6 +36,12 @@ async def bulk_transfer(request):
         await mark_as_processed(content)
 
     return HttpResponse("OK")
+
+
+async def is_valid_data(content):
+    data = json.loads(content)
+    serializer = BankAccountSerializer(data=data)
+    return serializer.is_valid()
 
 
 async def is_already_processed(content):
