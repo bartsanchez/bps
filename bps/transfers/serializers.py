@@ -5,7 +5,7 @@ from .models import Transfer
 
 
 class TransferSerializer(ModelSerializer):
-    amount = serializers.CharField()
+    amount = serializers.CharField(source="amount_cents")
 
     class Meta:
         model = Transfer

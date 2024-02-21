@@ -55,6 +55,8 @@ def perform_operations(serializer, bank_account, content):
         if serializer.requested_amount_cents() > bank_account.balance_cents:
             return False
 
+        serializer.save()
+
         mark_as_processed(content)
 
     return True
