@@ -22,7 +22,7 @@ class Transfer(models.Model):
     counterparty_name = models.TextField()
     counterparty_iban = models.TextField()
     counterparty_bic = models.TextField()
-    amount_cents = models.IntegerField()
+    amount_cents = models.PositiveIntegerField()
     bank_account = models.ForeignKey(BankAccount, on_delete=models.CASCADE)
     description = models.TextField()
 
