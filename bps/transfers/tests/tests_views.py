@@ -20,6 +20,7 @@ class TransfersViewTests(TestCase):
                 "organization_name": "a",
                 "organization_iban": "b",
                 "organization_bic": "c",
+                "credit_transfers": [],
             },
             content_type="application/json",
         )
@@ -45,6 +46,7 @@ class IdempotencyTests(TestCase):
             "organization_name": "foo",
             "organization_iban": "bar",
             "organization_bic": "qux",
+            "credit_transfers": [],
         }
 
     def test_bulk_transfer_first_is_ok(self):
