@@ -17,11 +17,7 @@ async def bulk_transfer(request):
 
     logger.info("Received content: %(content)", extra={"content": content.decode()})
 
-    # Idempotency
-    # Ensure we are not processing the same request more than once
-    hashed_content = hashlib.sha256(content).hexdigest()
-    query = ProcessedBulkTransfer.objects.filter(request_hash=hashed_content)
-    already_processed = await query.aexists()
+    already_processed = await is_already_processed(content)
     if already_processed:
         return HttpResponse(status=422)
 
@@ -29,3 +25,11 @@ async def bulk_transfer(request):
     await ProcessedBulkTransfer.objects.acreate(content=content.decode())
 
     return HttpResponse("OK")
+
+
+async def is_already_processed(content):
+    # Idempotency
+    # Ensure we are not processing the same request more than once
+    hashed_content = hashlib.sha256(content).hexdigest()
+    query = ProcessedBulkTransfer.objects.filter(request_hash=hashed_content)
+    return await query.aexists()
