@@ -27,7 +27,7 @@ async def bulk_transfer(request):
     if not serializer.is_valid():
         return HttpResponse(status=UNPROCESSABLE_CONTENT_STATUS_CODE)
 
-    bank_account, exists = await bank_account_exists(serializer.data)
+    bank_account, exists = await bank_account_exists(serializer.validated_data)
     if not exists:
         return HttpResponse(status=UNPROCESSABLE_CONTENT_STATUS_CODE)
 
@@ -57,9 +57,9 @@ async def is_already_processed(content):
     return await query.aexists()
 
 
-async def bank_account_exists(data):
-    iban = data["organization_iban"]
-    bic = data["organization_bic"]
+async def bank_account_exists(validated_data):
+    iban = validated_data["organization_iban"]
+    bic = validated_data["organization_bic"]
     query = BankAccount.objects.filter(iban=iban, bic=bic)
     return await query.afirst(), await query.aexists()
 

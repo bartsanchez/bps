@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from adrf.serializers import ModelSerializer
 from rest_framework import serializers
 from transfers.serializers import TransferSerializer
@@ -18,3 +20,6 @@ class BankAccountTransfersRequestSerializer(ModelSerializer):
             "organization_bic",
             "credit_transfers",
         ]
+
+    def requested_amount(self):
+        return sum([Decimal(ct["amount"]) for ct in self.validated_data["transfers"]])

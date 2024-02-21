@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from bank_accounts.models import BankAccount
 from django.test import TestCase
 from django.urls import reverse
@@ -30,6 +32,8 @@ class RequestedAmountSerializerTests(TestCase):
         }
         serializer = BankAccountTransfersRequestSerializer(data=data)
         self.assertTrue(serializer.is_valid())
+
+        self.assertEqual(serializer.requested_amount(), Decimal("681.1"))
 
 
 class SerializerTests(TestCase):
