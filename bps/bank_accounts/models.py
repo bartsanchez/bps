@@ -3,7 +3,7 @@ from django.db import models
 
 class BankAccount(models.Model):
     organization_name = models.TextField()
-    balance_cents = models.PositiveIntegerField()
+    balance_cents = models.PositiveBigIntegerField()
     iban = models.TextField(unique=True)
     bic = models.TextField(unique=True)
 

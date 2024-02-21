@@ -25,9 +25,9 @@ def test_sample1_again_is_returning_422_error():
     assert r.status_code == UNPROCESSABLE_CONTENT_STATUS_CODE
 
 
-def test_sample2():
+def test_sample2__not_enough_funds():
     with Path("./sample2.json").open() as f:
         data = f.read()
 
     r = requests.post(BULK_TRANSFER_URL, data=data, timeout=5)
-    assert r.status_code == requests.codes.ok
+    assert r.status_code == UNPROCESSABLE_CONTENT_STATUS_CODE  # not enough funds

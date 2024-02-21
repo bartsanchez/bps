@@ -3,7 +3,9 @@ import json
 import logging
 
 import redis
+from asgiref.sync import sync_to_async
 from bank_accounts.models import BankAccount
+from django.db import transaction
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -39,9 +41,23 @@ async def bulk_transfer(request):
         if already_processed:
             return HttpResponse(status=UNPROCESSABLE_CONTENT_STATUS_CODE)
 
-        await mark_as_processed(content)
+        result = await perform_operations(serializer, bank_account, content)
+        if not result:
+            return HttpResponse(status=UNPROCESSABLE_CONTENT_STATUS_CODE)
 
     return HttpResponse("OK")
+
+
+@sync_to_async
+def perform_operations(serializer, bank_account, content):
+    # Ensure that everything is done or nothing
+    with transaction.atomic():
+        if serializer.requested_amount_cents() > bank_account.balance_cents:
+            return False
+
+        mark_as_processed(content)
+
+    return True
 
 
 async def serialize_data(content):
@@ -64,5 +80,5 @@ async def bank_account_exists(validated_data):
     return await query.afirst(), await query.aexists()
 
 
-async def mark_as_processed(content):
-    return await ProcessedBulkTransfer.objects.acreate(content=content.decode())
+def mark_as_processed(content):
+    return ProcessedBulkTransfer.objects.create(content=content.decode())

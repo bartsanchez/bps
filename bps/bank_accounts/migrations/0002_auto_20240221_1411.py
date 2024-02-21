@@ -9,7 +9,7 @@ def add_bank_account(apps, _):
         organization_name="ACME Corp",
         bic="OIVUSCLQXXX",
         iban="FR10474608000002006107XXXXX",
-        balance_cents=777777,
+        balance_cents=7777777,
     )
     bank_account.save()
 

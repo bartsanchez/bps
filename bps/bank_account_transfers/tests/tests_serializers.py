@@ -44,7 +44,7 @@ class SerializerTests(TestCase):
             organization_name="foo",
             iban="bar",
             bic="qux",
-            balance_cents=0,
+            balance_cents=999999999999,
         )
         bank_account.save()
 
@@ -105,3 +105,32 @@ class SerializerTests(TestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
+
+    def test_bulk_transfer_not_enough_funds(self):
+        bank_account = BankAccount(
+            organization_name="x",
+            iban="y",
+            bic="z",
+            balance_cents=999,
+        )
+        bank_account.save()
+        content = {
+            "organization_name": "x",
+            "organization_iban": "y",
+            "organization_bic": "z",
+            "credit_transfers": [
+                {
+                    "amount": "1000",
+                    "counterparty_name": "Bip Bip",
+                    "counterparty_bic": "CRLYFRPPTOU",
+                    "counterparty_iban": "EE383680981021245685",
+                    "description": "Wonderland/4410",
+                },
+            ],
+        }
+        response = self.client.post(
+            self.url,
+            data=content,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 422)
