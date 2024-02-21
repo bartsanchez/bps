@@ -23,3 +23,6 @@ class BankAccountTransfersRequestSerializer(ModelSerializer):
 
     def requested_amount(self):
         return sum([Decimal(ct["amount"]) for ct in self.validated_data["transfers"]])
+
+    def requested_amount_cents(self):
+        return (self.requested_amount() * 100).to_integral_exact()

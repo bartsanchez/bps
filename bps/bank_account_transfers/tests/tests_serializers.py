@@ -34,6 +34,7 @@ class RequestedAmountSerializerTests(TestCase):
         self.assertTrue(serializer.is_valid())
 
         self.assertEqual(serializer.requested_amount(), Decimal("681.1"))
+        self.assertEqual(serializer.requested_amount_cents(), 68110)
 
 
 class SerializerTests(TestCase):
