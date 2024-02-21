@@ -13,6 +13,8 @@ from .models import ProcessedBulkTransfer
 
 logger = logging.getLogger(__name__)
 
+UNPROCESSABLE_CONTENT_STATUS_CODE = 422
+
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -23,11 +25,11 @@ async def bulk_transfer(request):
 
     serializer = await serialize_data(content)
     if not serializer.is_valid():
-        return HttpResponse(status=422)
+        return HttpResponse(status=UNPROCESSABLE_CONTENT_STATUS_CODE)
 
     bank_account = await bank_account_exists(serializer.data)
     if not bank_account:
-        return HttpResponse(status=422)
+        return HttpResponse(status=UNPROCESSABLE_CONTENT_STATUS_CODE)
 
     # Setup semaphore to avoid race conditions
     r = redis.Redis(host="redis_semaphore")
@@ -36,7 +38,7 @@ async def bulk_transfer(request):
     ):  # TODO: replace lock key with iban to allow requests from different accounts
         already_processed = await is_already_processed(content)
         if already_processed:
-            return HttpResponse(status=422)
+            return HttpResponse(status=UNPROCESSABLE_CONTENT_STATUS_CODE)
 
         await mark_as_processed(content)
 
