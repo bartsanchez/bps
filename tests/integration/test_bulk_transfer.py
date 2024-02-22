@@ -32,3 +32,27 @@ def test_sample2__not_enough_funds():
 
     r = requests.post(BULK_TRANSFER_URL, data=data, timeout=5)
     assert r.status_code == UNPROCESSABLE_CONTENT_STATUS_CODE  # not enough funds
+
+
+def test_negative_amounts_should_be_rejected():
+    with Path("./sample_negative_values.json").open() as f:
+        data = f.read()
+
+    r = requests.post(BULK_TRANSFER_URL, data=data, timeout=5)
+    assert r.status_code == UNPROCESSABLE_CONTENT_STATUS_CODE
+
+
+def test_zero_amounts_should_be_rejected():
+    with Path("./sample_zero_values.json").open() as f:
+        data = f.read()
+
+    r = requests.post(BULK_TRANSFER_URL, data=data, timeout=5)
+    assert r.status_code == UNPROCESSABLE_CONTENT_STATUS_CODE
+
+
+def test_non_monetary_values_should_be_rejected():
+    with Path("./sample_non_monetary_values.json").open() as f:
+        data = f.read()
+
+    r = requests.post(BULK_TRANSFER_URL, data=data, timeout=5)
+    assert r.status_code == UNPROCESSABLE_CONTENT_STATUS_CODE
