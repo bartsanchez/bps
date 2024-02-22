@@ -1,6 +1,7 @@
 import logging
 from unittest import mock
 
+import django
 from bank_accounts.models import BankAccount
 from django.test import TestCase
 from django.urls import reverse
@@ -86,3 +87,45 @@ class IdempotencyTests(TestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 422)
+
+
+class SomethingBreaksTests(TestCase):
+    def setUp(self):
+        self.url = reverse("bulk_transfer")
+        bank_account = BankAccount(
+            organization_name="AA",
+            iban="BB",
+            bic="CC",
+            balance_cents=1000,
+        )
+        bank_account.save()
+        self.content = {
+            "organization_name": "AA",
+            "organization_iban": "BB",
+            "organization_bic": "CC",
+            "credit_transfers": [
+                {
+                    "amount": "1",
+                    "counterparty_name": "DD",
+                    "counterparty_bic": "EE",
+                    "counterparty_iban": "FF",
+                    "description": "GG",
+                },
+            ],
+        }
+
+    @mock.patch("bank_account_transfers.views.mark_as_processed")
+    def test_orm_is_broken(self, orm_mock):
+        def _orm_exception_side_effect(_):
+            raise django.db.utils.OperationalError
+
+        orm_mock.side_effect = _orm_exception_side_effect
+
+        with self.assertRaises(django.db.utils.OperationalError):
+            self.client.post(
+                self.url,
+                data=self.content,
+                content_type="application/json",
+            )
+
+        orm_mock.assert_called_once()
