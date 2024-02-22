@@ -5,6 +5,7 @@ import django
 from bank_accounts.models import BankAccount
 from django.test import TestCase
 from django.urls import reverse
+from redis.exceptions import ConnectionError
 
 
 class TransfersViewTests(TestCase):
@@ -129,3 +130,19 @@ class SomethingBreaksTests(TestCase):
             )
 
         orm_mock.assert_called_once()
+
+    @mock.patch("bank_account_transfers.views.redis.Redis")
+    def test_redis_connection_is_lost(self, redis_mock):
+        def _redis_exception_side_effect(*args, **kwargs):
+            raise ConnectionError
+
+        redis_mock.side_effect = _redis_exception_side_effect
+
+        with self.assertRaises(ConnectionError):
+            self.client.post(
+                self.url,
+                data=self.content,
+                content_type="application/json",
+            )
+
+        redis_mock.assert_called_once_with(host="redis_semaphore")
