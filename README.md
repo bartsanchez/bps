@@ -51,8 +51,11 @@ Then you could test the API in port 8000 of your machine.
 There is an already created account. Its balance is: 7777777 cents.
 
 * Note that the API expected an string for the amount, being the value the full amount (not cents).
-* Note(2) that if you try to run the exact same payload the API will return error. This is so for avoiding processing
+* Note(2) it will return 422 if any amount in credit_transactions is negative or zero.
+* Note(3) that if you try to run the exact same payload the API will return error. This is so for avoiding processing
   duplicated requests more than once.
+* Note(4) it will return 422 if DB is not accesible. You can try this by doing: "docker compose stop db"
+* Note(5) it will return 422 if Redis is not accesible. You can try this by doing: "docker compose stop redis_semaphore"
 
 ```sh
 curl -w "%{http_code}" -X POST -d '{"organization_name": "ACME Corp", "organization_iban": "FR10474608000002006107XXXXX", "organization_bic": "OIVUSCLQXXX", "credit_transfers": [{"amount": "700", "counterparty_name": "d", "counterparty_bic": "e", "counterparty_iban": "f", "description": "g"}]}' -H "Content-Type: application/json" http://localhost:8000/bulk_transfer

@@ -122,12 +122,12 @@ class SomethingBreaksTests(TestCase):
 
         orm_mock.side_effect = _orm_exception_side_effect
 
-        with self.assertRaises(django.db.utils.OperationalError):
-            self.client.post(
-                self.url,
-                data=self.content,
-                content_type="application/json",
-            )
+        response = self.client.post(
+            self.url,
+            data=self.content,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 422)
 
         orm_mock.assert_called_once()
 
@@ -138,11 +138,11 @@ class SomethingBreaksTests(TestCase):
 
         redis_mock.side_effect = _redis_exception_side_effect
 
-        with self.assertRaises(ConnectionError):
-            self.client.post(
-                self.url,
-                data=self.content,
-                content_type="application/json",
-            )
+        response = self.client.post(
+            self.url,
+            data=self.content,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 422)
 
         redis_mock.assert_called_once_with(host="redis_semaphore")
