@@ -58,7 +58,10 @@ def perform_operations(serializer, bank_account, content):
     # Ensure that everything is done or nothing
     with transaction.atomic():
         requested_amount_cents = serializer.requested_amount_cents()
-        if requested_amount_cents > bank_account.balance_cents:
+        account_balance_cents = BankAccount.objects.get(
+            id=bank_account.id,
+        ).balance_cents
+        if requested_amount_cents > account_balance_cents:
             return False
 
         serializer.save()
